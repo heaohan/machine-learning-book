@@ -2,7 +2,7 @@
 
 
 import sys
-from python_environment_check import check_packages
+# from python_environment_check import check_packages
 import numpy as np
 import os
 import pandas as pd
@@ -32,7 +32,7 @@ d = {
     'matplotlib': '3.4.3',
     'pandas': '1.3.2'
 }
-check_packages(d)
+# check_packages(d)
 
 
 # # Chapter 2 - Training Machine Learning Algorithms for Classification
@@ -112,10 +112,11 @@ class Perceptron:
       Number of misclassifications (updates) in each epoch.
 
     """
-    def __init__(self, eta=0.01, n_iter=50, random_state=1):
+    def __init__(self, eta=0.01, n_iter=50, random_state=1, init_w_with_zero=False):
         self.eta = eta
         self.n_iter = n_iter
         self.random_state = random_state
+        self.init_w_with_zero = init_w_with_zero
 
     def fit(self, X, y):
         """Fit training data.
@@ -134,8 +135,11 @@ class Perceptron:
 
         """
         rgen = np.random.RandomState(self.random_state)
-        self.w_ = rgen.normal(loc=0.0, scale=0.01, size=X.shape[1])
-        self.b_ = np.float_(0.)
+        if self.init_w_with_zero:
+          self.w_ = np.zeros(X.shape[1])
+        else:
+          self.w_ = rgen.normal(loc=0.0, scale=0.01, size=X.shape[1])
+        self.b_ = np.float64(0.)
         
         self.errors_ = []
 
@@ -281,7 +285,18 @@ plt.legend(loc='upper left')
 
 
 #plt.savefig('images/02_08.png', dpi=300)
-plt.show()
+plt.show(block=True)
+
+ppn_with_zero_init_w = Perceptron(eta=0.1, n_iter=10, init_w_with_zero=True)
+
+ppn_with_zero_init_w.fit(X, y)
+
+plot_decision_regions(X, y, classifier=ppn_with_zero_init_w)
+plt.xlabel('Sepal length [cm]')
+plt.ylabel('Petal length [cm]')
+plt.legend(loc='upper left')
+plt.title("zero init w")
+plt.show(block=True)
 
 
 
@@ -351,7 +366,7 @@ class AdalineGD:
         """
         rgen = np.random.RandomState(self.random_state)
         self.w_ = rgen.normal(loc=0.0, scale=0.01, size=X.shape[1])
-        self.b_ = np.float_(0.)
+        self.b_ = np.float64(0.)
         self.losses_ = []
 
         for i in range(self.n_iter):
@@ -405,7 +420,7 @@ ax[1].set_ylabel('Mean squared error')
 ax[1].set_title('Adaline - Learning rate 0.0001')
 
 # plt.savefig('images/02_11.png', dpi=300)
-plt.show()
+plt.show(block=True)
 
 
 
@@ -440,7 +455,7 @@ plt.ylabel('Petal length [standardized]')
 plt.legend(loc='upper left')
 plt.tight_layout()
 #plt.savefig('images/02_14_1.png', dpi=300)
-plt.show()
+plt.show(block=True)
 
 plt.plot(range(1, len(ada_gd.losses_) + 1), ada_gd.losses_, marker='o')
 plt.xlabel('Epochs')
@@ -448,7 +463,7 @@ plt.ylabel('Mean squared error')
 
 plt.tight_layout()
 #plt.savefig('images/02_14_2.png', dpi=300)
-plt.show()
+plt.show(block=True)
 
 
 
@@ -539,7 +554,7 @@ class AdalineSGD:
         """Initialize weights to small random numbers"""
         self.rgen = np.random.RandomState(self.random_state)
         self.w_ = self.rgen.normal(loc=0.0, scale=0.01, size=m)
-        self.b_ = np.float_(0.)
+        self.b_ = np.float64(0.)
         self.w_initialized = True
         
     def _update_weights(self, xi, target):
@@ -576,15 +591,15 @@ plt.ylabel('Petal length [standardized]')
 plt.legend(loc='upper left')
 
 plt.tight_layout()
-plt.savefig('figures/02_15_1.png', dpi=300)
-plt.show()
+#plt.savefig('figures/02_15_1.png', dpi=300)
+plt.show(block=True)
 
 plt.plot(range(1, len(ada_sgd.losses_) + 1), ada_sgd.losses_, marker='o')
 plt.xlabel('Epochs')
 plt.ylabel('Average loss')
 
-plt.savefig('figures/02_15_2.png', dpi=300)
-plt.show()
+#plt.savefig('figures/02_15_2.png', dpi=300)
+plt.show(block=True)
 
 
 
